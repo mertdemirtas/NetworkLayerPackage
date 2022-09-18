@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum NetworkStates {
+public enum NetworkStates {
     case processing
     case done
     case clientError

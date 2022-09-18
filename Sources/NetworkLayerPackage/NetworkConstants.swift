@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol NetworkConstants {
+public protocol NetworkConstants {
     var apiKey: String? { get }
     var baseUrl: String { get }
 }

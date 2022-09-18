@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol Endpoint {
+public protocol Endpoint {
     var networkConstants : NetworkConstants { get }
     var httpMethod: HTTPMethods { get }
     var path: String? { get }

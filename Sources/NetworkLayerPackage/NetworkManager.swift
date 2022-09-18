@@ -7,7 +7,7 @@
 
 import Foundation
 
-class NetworkManager {
+public class NetworkManager {
     static let shared = NetworkManager()
     
     var networkStateClosure: ((NetworkStates) -> Void)?
