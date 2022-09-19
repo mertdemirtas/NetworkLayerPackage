@@ -8,11 +8,11 @@
 import Foundation
 
 open class Response {
-    var networkConstants : NetworkConstants
-    var httpMethod: HTTPMethods
-    var path: [String]?
-    var headers: [String: String]?
-    var body: [String: Any]?
+    public var networkConstants : NetworkConstants
+    public var httpMethod: HTTPMethods
+    public var path: [String]?
+    public var headers: [String: String]?
+    public var body: [String: Any]?
     
     public init(networkConstants: NetworkConstants, httpMethod: HTTPMethods) {
         self.networkConstants = networkConstants
