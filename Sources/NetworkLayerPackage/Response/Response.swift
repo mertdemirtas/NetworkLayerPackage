@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Response {
+open class Response {
     var networkConstants : NetworkConstants
     var httpMethod: HTTPMethods
     var path: [String]?
