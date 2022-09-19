@@ -14,7 +14,7 @@ open class Response {
     var headers: [String: String]?
     var body: [String: Any]?
     
-    init(networkConstants: NetworkConstants, httpMethod: HTTPMethods) {
+    public init(networkConstants: NetworkConstants, httpMethod: HTTPMethods) {
         self.networkConstants = networkConstants
         self.httpMethod = httpMethod
     }
