@@ -22,3 +22,15 @@ class CharacterResponse: Response {
 }
 
 ## And Request Closure be like
+
+let request = CharacterResponse(pageNumber: currentPageNumber)
+NetworkManager.shared.request(from: request, completionHandler: { [weak self] (result: Result<RickAndMortyCharacterModel, NetworkErrors>) in
+    switch(result) {
+    case .success(let result):
+        self?.bindData(result: result)
+        break
+    case .failure(let error):
+        print(error)
+        break
+    }
+})
