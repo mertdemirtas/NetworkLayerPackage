@@ -15,7 +15,7 @@ open class NetworkManager {
     private init() {
     }
     
-    open func fetchData<T: Decodable>(response: Response, completionHandler: @escaping (Result<T, NetworkErrors>) -> Void) {
+    open func fetchData<T: Decodable>(from response: Response, completionHandler: @escaping (Result<T, NetworkErrors>) -> Void) {
         
         // MARK: URL
         guard let urlString = response.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
