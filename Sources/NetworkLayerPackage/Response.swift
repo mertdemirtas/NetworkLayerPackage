@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol Endpoint {
+public protocol Response {
     var networkConstants : NetworkConstants { get }
     var httpMethod: HTTPMethods { get }
     var path: String? { get }
@@ -15,9 +15,9 @@ public protocol Endpoint {
     var body: [String: Any]? { get }
 }
 
-extension Endpoint {
+extension Response {
     // a default extension that creates the full URL
-    var url: String {
+    var urlString: String {
         guard let path = path else { return ""}
         return networkConstants.baseUrl + path
     }

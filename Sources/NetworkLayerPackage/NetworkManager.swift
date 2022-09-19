@@ -7,18 +7,18 @@
 
 import Foundation
 
-public class NetworkManager {
-    static let shared = NetworkManager()
+open class NetworkManager {
+    public static let shared = NetworkManager()
     
     var networkStateClosure: ((NetworkStates) -> Void)?
     
     private init() {
     }
     
-    func fetchData<T: Decodable>(endpoint: Endpoint, completionHandler: @escaping (Result<T, NetworkErrors>) -> Void) {
+    open func fetchData<T: Decodable>(response: Response, completionHandler: @escaping (Result<T, NetworkErrors>) -> Void) {
         
         // MARK: URL
-        guard let urlString = endpoint.url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+        guard let urlString = response.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
             completionHandler(.failure(.clientError))
             return
         }
@@ -27,9 +27,9 @@ public class NetworkManager {
         var urlRequest = URLRequest(url: url)
         
         // MARK: HTTP Method
-        urlRequest.httpMethod = endpoint.httpMethod.rawValue
+        urlRequest.httpMethod = response.httpMethod.rawValue
         
-        if let headers = endpoint.headers {
+        if let headers = response.headers {
             for element in headers {
                 urlRequest.setValue(element.value, forHTTPHeaderField: element.key)
             }
