@@ -37,7 +37,7 @@ open class NetworkManager {
         
         let task = URLSession.shared.dataTask(with: urlRequest, completionHandler: { data, response, error in
 
-            if let statusCode = (response as? HTTPURLResponse)?.statusCode , 200..<300 ~= statusCode {
+            if let statusCode = (response as? HTTPURLResponse)?.statusCode , !(200..<300 ~= statusCode) {
                 completionHandler(.failure(NetworkErrors(statusCode: statusCode)))
                 return
             }
