@@ -1,5 +1,5 @@
 //
-//  HTTPStatus.swift
+//  NetworkErrors.swift
 //  NetworkLayer
 //
 //  Created by Mert Demirtaş on 31.08.2022.

@@ -1,5 +1,5 @@
 //
-//  HttpMethod.swift
+//  HttpMethods.swift
 //  NetworkLayer
 //
 //  Created by Mert Demirtaş on 30.08.2022.

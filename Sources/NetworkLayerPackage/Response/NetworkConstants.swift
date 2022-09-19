@@ -1,6 +1,6 @@
 //
 //  NetworkConstants.swift
-//  MovieApp-Invio
+//  NetworkLayer
 //
 //  Created by Mert Demirtaş on 27.06.2022.
 //
