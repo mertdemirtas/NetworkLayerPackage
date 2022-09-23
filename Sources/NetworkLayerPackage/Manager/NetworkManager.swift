@@ -20,7 +20,7 @@ public class NetworkManager {
     public var networkState: ((NetworkStates) -> Void)?
     
     
-    public func checkConnectionStatus(closure: (NetworkError?) -> Void) {
+    public func checkConnectionStatus(closure: @escaping (NetworkError?) -> Void) {
         networkConnection.checkConnection()
         
         switch(networkConnection.connectionStatus) {
