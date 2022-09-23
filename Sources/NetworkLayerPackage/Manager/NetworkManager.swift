@@ -21,6 +21,8 @@ public class NetworkManager {
     
     
     public func checkConnectionStatus(closure: (NetworkError?) -> Void) {
+        networkConnection.checkConnection()
+        
         switch(networkConnection.connectionStatus) {
         case true:
             closure(nil)
