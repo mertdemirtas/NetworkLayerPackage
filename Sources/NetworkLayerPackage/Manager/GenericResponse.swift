@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class GenericResponse<ResponseType: Codable> {
+open class GenericResponse<ResponseType: Codable> {
     private var response: ResponseType?
     private var networkError: NetworkErrors?
     
