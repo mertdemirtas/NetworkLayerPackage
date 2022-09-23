@@ -8,11 +8,11 @@
 import Foundation
 
 open class Endpoint {
-    private var networkConstants : NetworkConstants
-    private var httpMethod: HTTPMethods
-    private var path: String?
-    private var headers: [String: String]?
-    private var body: [String: Any]?
+    public var networkConstants : NetworkConstants
+    public var httpMethod: HTTPMethods
+    public var path: String?
+    public var headers: [String: String]?
+    public var body: [String: Any]?
     
     public init(networkConstants: NetworkConstants, httpMethod: HTTPMethods, path: String? = nil, headers: [String:String]? = nil, body: [String: Any]? = nil) {
         self.networkConstants = networkConstants
