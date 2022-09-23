@@ -8,8 +8,8 @@
 import Foundation
 
 open class Endpoint {
-    public var networkConstants : NetworkConstants?
-    public var httpMethod: HTTPMethods?
+    public var networkConstants : NetworkConstants
+    public var httpMethod: HTTPMethods
     public var path: String?
     public var headers: [String: String]?
     public var body: [String: Any]?
@@ -26,8 +26,7 @@ open class Endpoint {
 extension Endpoint {
     // a default extension that creates the full URL
     var urlString: String {
-        guard let baseUrl = networkConstants?.baseUrl else { return "" }
-        guard let path = path else { return baseUrl }
-        return baseUrl + path
+        guard let path = path else { return networkConstants.baseUrl }
+        return networkConstants.baseUrl + path
     }
 }

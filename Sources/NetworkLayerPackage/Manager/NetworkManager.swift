@@ -28,7 +28,7 @@ public class NetworkManager {
         var urlRequest = URLRequest(url: url)
         
         // MARK: HTTP Method
-        urlRequest.httpMethod = response.endpoint.httpMethod?.rawValue
+        urlRequest.httpMethod = response.endpoint.httpMethod.rawValue
         
         if let body = response.endpoint.body {
             do {
