@@ -9,6 +9,7 @@ import Foundation
 
 public enum NetworkErrorsType: Error {
     case httpError(HTTPErrors)
+    case internetConnectionError
     case encodeError
     case unknown
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum ClientErrors: String, Error {
+public enum ClientErrors: String {
     case badRequest = "Bad Request"
     case unAuthorized = "UnAuthorized"
     case paymentRequired = "Payment Required"

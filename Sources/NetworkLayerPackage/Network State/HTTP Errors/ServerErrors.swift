@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum ServerErrors: String, Error {
+public enum ServerErrors: String {
     case internalServerError = "Internal Server Error"
     case notImplementet = "Not Implemented"
     case badGateway = "Bad Gateway"

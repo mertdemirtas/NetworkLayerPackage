@@ -6,19 +6,41 @@
 //
 
 import Foundation
+import Combine
 
+@available(iOS 13.0, *)
 public class NetworkManager {
     public static let shared = NetworkManager()
+    
+    let networkConnection = NetworkConnection()
     
     private init() {
     }
     
     public var networkState: ((NetworkStates) -> Void)?
     
+    
+    public func checkConnectionStatus(closure: (NetworkError?) -> Void) {
+        switch(networkConnection.connectionStatus) {
+        case true:
+            closure(nil)
+        case false:
+            closure(NetworkError.init(error: .internetConnectionError))
+        }
+    }
+    
     public func request<T: Codable>(endpoint: Endpoint, completionHandler: @escaping (Result<T, NetworkError>) -> Void) {
-        networkState?(.processing)
-        // MARK: URL
+        // MARK: Connection Check
+        checkConnectionStatus(closure: { [weak self] error in
+            if let error = error {
+                self?.networkState?(.error(error))
+                completionHandler(.failure(error))
+            }
+        })
         
+        networkState?(.processing)
+        
+        // MARK: URL
         guard let urlString = endpoint.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
             completionHandler(.failure(.init(error: .httpError(.clientError(.badRequest)))))
             return

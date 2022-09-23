@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum HTTPErrors: Error {
+public enum HTTPErrors {
     case clientError(ClientErrors)
     case serverError(ServerErrors)
     case unknown
