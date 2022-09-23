@@ -23,16 +23,11 @@ public class NetworkManager {
     public func checkConnectionStatus(completion: @escaping (NetworkError?) -> Void) {
         networkConnection.checkConnection(completion: { [weak self] status in
             switch(status) {
-            case .satisfied:
+            case true:
                 completion(nil)
-            case .unsatisfied:
+            case false:
                 self?.networkState?(.error(.init(error: .internetConnectionError)))
                 completion(.init(error: .internetConnectionError))
-            case .requiresConnection:
-                self?.networkState?(.error(.init(error: .internetConnectionError)))
-                completion(.init(error: .internetConnectionError))
-            @unknown default:
-                completion(nil)
             }
         })
     }
