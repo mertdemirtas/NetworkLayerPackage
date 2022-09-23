@@ -13,17 +13,15 @@ import Combine
 public class NetworkConnection {
     
     private let monitor = NWPathMonitor()
-    public let queue = DispatchQueue(label: "Monitor")
-    
-    var connectionStatus: Bool = false
-    
-    func checkConnection() {
-        monitor.pathUpdateHandler = { [weak self] path in
+    private let queue = DispatchQueue(label: "Monitor")
+        
+    public func checkConnection(completion: @escaping (NWPath.Status) -> Void) {
+        monitor.pathUpdateHandler = { path in
             if(path.status == .satisfied) {
-                self?.connectionStatus = true
+                completion(.satisfied)
             }
             else {
-                self?.connectionStatus = false
+                completion(.unsatisfied)
             }
         }
         monitor.start(queue: queue)

@@ -20,22 +20,28 @@ public class NetworkManager {
     public var networkState: ((NetworkStates) -> Void)?
     
     
-    public func checkConnectionStatus(closure: @escaping (NetworkError?) -> Void) {
-        networkConnection.checkConnection()
-        
-        switch(networkConnection.connectionStatus) {
-        case true:
-            closure(nil)
-        case false:
-            closure(NetworkError.init(error: .internetConnectionError))
-        }
+    public func checkConnectionStatus(completion: @escaping (NetworkError?) -> Void) {
+        networkConnection.checkConnection(completion: { [weak self] status in
+            switch(status) {
+            case .satisfied:
+                completion(nil)
+            case .unsatisfied:
+                self?.networkState?(.error(.init(error: .internetConnectionError)))
+                completion(.init(error: .internetConnectionError))
+            case .requiresConnection:
+                self?.networkState?(.error(.init(error: .internetConnectionError)))
+                completion(.init(error: .internetConnectionError))
+            @unknown default:
+                completion(nil)
+            }
+        })
     }
     
     public func request<T: Codable>(endpoint: Endpoint, completionHandler: @escaping (Result<T, NetworkError>) -> Void) {
         // MARK: Connection Check
-        checkConnectionStatus(closure: { [weak self] error in
+        
+        checkConnectionStatus(completion: { error in
             if let error = error {
-                self?.networkState?(.error(error))
                 completionHandler(.failure(error))
             }
         })
