@@ -15,22 +15,27 @@ public class NetworkManager {
     
     public var networkState: ((NetworkStates) -> Void)?
     
-    public func request<T: RequestType>(response: T, completionHandler: @escaping (GenericResponse<T>) -> Void) {
+    public func request<T: Codable>(endpoint: Endpoint, completionHandler: @escaping (GenericResponse<T>) -> Void) {
         networkState?(.processing)
         // MARK: URL
         
-        guard let urlString = response.endpoint.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+        guard let urlString = endpoint.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
             completionHandler(.init(response: nil, networkError: .httpError(.clientError(.badRequest))))
             return
         }
         
-        guard let url = URL(string: urlString) else { return }
+        guard let url = URL(string: urlString) else {
+            networkState?(.error(.httpError(.clientError(.badRequest))))
+            completionHandler(.init(response: nil, networkError: .httpError(.clientError(.badRequest))))
+            return
+        }
+        
         var urlRequest = URLRequest(url: url)
         
         // MARK: HTTP Method
-        urlRequest.httpMethod = response.endpoint.httpMethod.rawValue
+        urlRequest.httpMethod = endpoint.httpMethod.rawValue
         
-        if let body = response.endpoint.body {
+        if let body = endpoint.body {
             do {
                 urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
             } catch let error {
@@ -39,7 +44,7 @@ public class NetworkManager {
             }
         }
         
-        if let headers = response.endpoint.headers {
+        if let headers = endpoint.headers {
             for element in headers {
                 urlRequest.setValue(element.value, forHTTPHeaderField: element.key)
             }
