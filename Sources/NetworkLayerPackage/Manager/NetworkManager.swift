@@ -20,13 +20,13 @@ public class NetworkManager {
         // MARK: URL
         
         guard let urlString = endpoint.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
-            completionHandler(.init(response: nil, networkError: .httpError(.clientError(.badRequest))))
+            completionHandler(GenericResponse<T>(response: nil, networkError: .httpError(.clientError(.badRequest))))
             return
         }
         
         guard let url = URL(string: urlString) else {
             networkState?(.error(.httpError(.clientError(.badRequest))))
-            completionHandler(.init(response: nil, networkError: .httpError(.clientError(.badRequest))))
+            completionHandler(GenericResponse<T>(response: nil, networkError: .httpError(.clientError(.badRequest))))
             return
         }
         
@@ -60,24 +60,24 @@ public class NetworkManager {
         if let statusCode = (response as? HTTPURLResponse)?.statusCode , !(200..<300 ~= statusCode) {
             let error = NetworkErrorOrganaizer.organize(statusCode: statusCode)
             networkState?(.error(.httpError(error)))
-            completionHandler(.init(response: nil, networkError: .httpError(error)))
+            completionHandler(GenericResponse<T>(response: nil, networkError: .httpError(error)))
             return
         }
         
         guard let data = data, error == nil else {
             self.networkState?(.done)
-            completionHandler(.init(response: nil, networkError: .unknown))
+            completionHandler(GenericResponse<T>(response: nil, networkError: .unknown))
             return
         }
         
         do {
             let decodedData = try JSONDecoder().decode(T.self, from: data)
             self.networkState?(.done)
-            completionHandler(.init(response: decodedData, networkError: nil))
+            completionHandler(GenericResponse<T>(response: decodedData, networkError: nil))
         }
         catch {
             self.networkState?(.error(.encodeError))
-            completionHandler(.init(response: nil, networkError: .encodeError))
+            completionHandler(GenericResponse<T>(response: nil, networkError: .encodeError))
         }
     }
 }
