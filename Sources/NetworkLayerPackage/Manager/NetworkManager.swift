@@ -15,18 +15,18 @@ public class NetworkManager {
     
     public var networkState: ((NetworkStates) -> Void)?
     
-    public func request<T: Codable>(endpoint: Endpoint, completionHandler: @escaping (Result<T, NetworkErrorsType>) -> Void) {
+    public func request<T: Codable>(endpoint: Endpoint, completionHandler: @escaping (Result<T, NetworkError>) -> Void) {
         networkState?(.processing)
         // MARK: URL
         
         guard let urlString = endpoint.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
-            completionHandler(.failure(.httpError(.clientError(.badRequest))))
+            completionHandler(.failure(.init(error: .httpError(.clientError(.badRequest)))))
             return
         }
         
         guard let url = URL(string: urlString) else {
             networkState?(.error(NetworkError(error: .httpError(.clientError(.badRequest)))))
-            completionHandler(.failure(.httpError(.clientError(.badRequest))))
+            completionHandler(.failure(.init(error: .httpError(.clientError(.badRequest)))))
             return
         }
         
@@ -55,18 +55,18 @@ public class NetworkManager {
         }).resume()
     }
     
-    private func taskHandler<T: Codable>(data: Data?, response: URLResponse?, error: Error?, completionHandler: @escaping (Result<T, NetworkErrorsType>) -> Void) {
+    private func taskHandler<T: Codable>(data: Data?, response: URLResponse?, error: Error?, completionHandler: @escaping (Result<T, NetworkError>) -> Void) {
         
         if let statusCode = (response as? HTTPURLResponse)?.statusCode , !(200..<300 ~= statusCode) {
             let error = NetworkErrorOrganaizer.organize(statusCode: statusCode)
             networkState?(.error(NetworkError.init(error: .httpError(error))))
-            completionHandler(.failure(.httpError(error)))
+            completionHandler(.failure(.init(error: NetworkErrorsType.httpError(error))))
             return
         }
         
         guard let data = data, error == nil else {
             self.networkState?(.done)
-            completionHandler(.failure(.unknown))
+            completionHandler(.failure(.init(error: .unknown)))
             return
         }
         
@@ -77,7 +77,7 @@ public class NetworkManager {
         }
         catch {
             self.networkState?(.error(NetworkError.init(error: .encodeError)))
-            completionHandler(.failure(.encodeError))
+            completionHandler(.failure(.init(error: .encodeError)))
         }
     }
 }
