@@ -1,26 +1,14 @@
 //
-//  NetworkErrors.swift
-//  NetworkLayer
+//  File.swift
+//  
 //
-//  Created by Mert Demirtaş on 31.08.2022.
+//  Created by Mert Demirtaş on 22.09.2022.
 //
 
 import Foundation
 
 public enum NetworkErrors: Error {
-    case clientError
-    case serverError
-    case decodeError
+    case httpError(HTTPErrors)
+    case encodeError
     case unknown
-    
-    init(statusCode: Int) {
-        switch(statusCode) {
-        case 400...499:
-            self = .clientError
-        case 500...599:
-            self = .serverError
-        default:
-            self = .unknown
-        }
-    }
 }

@@ -15,12 +15,12 @@ public class NetworkManager {
     
     public var networkState: ((NetworkStates) -> Void)?
     
-    public func request<T: Codable>(from response: Response, completionHandler: @escaping (Result<T, NetworkErrors>) -> Void) {
+    public func request<T: RequestType>(response: T, completionHandler: @escaping (GenericResponse<T>) -> Void) {
         networkState?(.processing)
-        
         // MARK: URL
-        guard let urlString = response.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
-            completionHandler(.failure(.clientError))
+        
+        guard let urlString = response.endpoint.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            completionHandler(.init(response: nil, networkError: .httpError(.clientError(.badRequest))))
             return
         }
         
@@ -28,9 +28,9 @@ public class NetworkManager {
         var urlRequest = URLRequest(url: url)
         
         // MARK: HTTP Method
-        urlRequest.httpMethod = response.httpMethod?.rawValue
+        urlRequest.httpMethod = response.endpoint.httpMethod?.rawValue
         
-        if let body = response.body {
+        if let body = response.endpoint.body {
             do {
                 urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
             } catch let error {
@@ -39,7 +39,7 @@ public class NetworkManager {
             }
         }
         
-        if let headers = response.headers {
+        if let headers = response.endpoint.headers {
             for element in headers {
                 urlRequest.setValue(element.value, forHTTPHeaderField: element.key)
             }
@@ -50,29 +50,29 @@ public class NetworkManager {
         }).resume()
     }
     
-    private func taskHandler<T: Codable>(data: Data?, response: URLResponse?, error: Error?, completionHandler: @escaping (Result<T, NetworkErrors>) -> Void) {
+    private func taskHandler<T: Codable>(data: Data?, response: URLResponse?, error: Error?, completionHandler: @escaping (GenericResponse<T>) -> Void) {
         
         if let statusCode = (response as? HTTPURLResponse)?.statusCode , !(200..<300 ~= statusCode) {
-            let error = NetworkErrors(statusCode: statusCode)
-            networkState?(.error(error))
-            completionHandler(.failure(error))
+            let error = NetworkErrorOrganaizer.organize(statusCode: statusCode)
+            networkState?(.error(.httpError(error)))
+            completionHandler(.init(response: nil, networkError: .httpError(error)))
             return
         }
         
         guard let data = data, error == nil else {
             self.networkState?(.done)
-            completionHandler(.failure(.unknown))
+            completionHandler(.init(response: nil, networkError: .unknown))
             return
         }
         
         do {
             let decodedData = try JSONDecoder().decode(T.self, from: data)
             self.networkState?(.done)
-            completionHandler(.success(decodedData))
+            completionHandler(.init(response: decodedData, networkError: nil))
         }
         catch {
-            self.networkState?(.error(.clientError))
-            completionHandler(.failure(.decodeError))
+            self.networkState?(.error(.encodeError))
+            completionHandler(.init(response: nil, networkError: .encodeError))
         }
     }
 }
