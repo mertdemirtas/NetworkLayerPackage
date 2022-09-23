@@ -15,18 +15,18 @@ public class NetworkManager {
     
     public var networkState: ((NetworkStates) -> Void)?
     
-    public func request<T: Codable>(endpoint: Endpoint, completionHandler: @escaping (GenericResponse<T>) -> Void) {
+    public func request<T: Codable>(endpoint: Endpoint, completionHandler: @escaping (Result<T, NetworkErrors>) -> Void) {
         networkState?(.processing)
         // MARK: URL
         
         guard let urlString = endpoint.urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
-            completionHandler(GenericResponse<T>(response: nil, networkError: .httpError(.clientError(.badRequest))))
+            completionHandler(.failure(.httpError(.clientError(.badRequest))))
             return
         }
         
         guard let url = URL(string: urlString) else {
             networkState?(.error(.httpError(.clientError(.badRequest))))
-            completionHandler(GenericResponse<T>(response: nil, networkError: .httpError(.clientError(.badRequest))))
+            completionHandler(.failure(.httpError(.clientError(.badRequest))))
             return
         }
         
@@ -55,29 +55,29 @@ public class NetworkManager {
         }).resume()
     }
     
-    private func taskHandler<T: Codable>(data: Data?, response: URLResponse?, error: Error?, completionHandler: @escaping (GenericResponse<T>) -> Void) {
+    private func taskHandler<T: Codable>(data: Data?, response: URLResponse?, error: Error?, completionHandler: @escaping (Result<T, NetworkErrors>) -> Void) {
         
         if let statusCode = (response as? HTTPURLResponse)?.statusCode , !(200..<300 ~= statusCode) {
             let error = NetworkErrorOrganaizer.organize(statusCode: statusCode)
             networkState?(.error(.httpError(error)))
-            completionHandler(GenericResponse<T>(response: nil, networkError: .httpError(error)))
+            completionHandler(.failure(.httpError(error)))
             return
         }
         
         guard let data = data, error == nil else {
             self.networkState?(.done)
-            completionHandler(GenericResponse<T>(response: nil, networkError: .unknown))
+            completionHandler(.failure(.unknown))
             return
         }
         
         do {
             let decodedData = try JSONDecoder().decode(T.self, from: data)
             self.networkState?(.done)
-            completionHandler(GenericResponse<T>(response: decodedData, networkError: nil))
+            completionHandler(.success(decodedData))
         }
         catch {
             self.networkState?(.error(.encodeError))
-            completionHandler(GenericResponse<T>(response: nil, networkError: .encodeError))
+            completionHandler(.failure(.encodeError))
         }
     }
 }

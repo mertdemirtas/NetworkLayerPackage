@@ -7,7 +7,12 @@
 
 import Foundation
 
-struct NetworkModel: Codable {
-    private var statusCode: Int?
-    private var statusDescription: String?
+public class NetworkModel: Error {
+    private var statusCode: Int
+    private var statusDescription: NetworkErrors
+    
+    init(statusCode: Int, statusDescription: NetworkErrors) {
+        self.statusCode = statusCode
+        self.statusDescription = statusDescription
+    }
 }
