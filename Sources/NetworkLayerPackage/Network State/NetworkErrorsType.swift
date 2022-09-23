@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum NetworkErrors: Error {
+public enum NetworkErrorsType: Error {
     case httpError(HTTPErrors)
     case encodeError
     case unknown

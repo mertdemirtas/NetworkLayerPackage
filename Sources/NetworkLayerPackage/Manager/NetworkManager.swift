@@ -15,7 +15,7 @@ public class NetworkManager {
     
     public var networkState: ((NetworkStates) -> Void)?
     
-    public func request<T: Codable>(endpoint: Endpoint, completionHandler: @escaping (Result<T, NetworkErrors>) -> Void) {
+    public func request<T: Codable>(endpoint: Endpoint, completionHandler: @escaping (Result<T, NetworkErrorsType>) -> Void) {
         networkState?(.processing)
         // MARK: URL
         
@@ -25,7 +25,7 @@ public class NetworkManager {
         }
         
         guard let url = URL(string: urlString) else {
-            networkState?(.error(.httpError(.clientError(.badRequest))))
+            networkState?(.error(NetworkError(error: .httpError(.clientError(.badRequest)))))
             completionHandler(.failure(.httpError(.clientError(.badRequest))))
             return
         }
@@ -55,11 +55,11 @@ public class NetworkManager {
         }).resume()
     }
     
-    private func taskHandler<T: Codable>(data: Data?, response: URLResponse?, error: Error?, completionHandler: @escaping (Result<T, NetworkErrors>) -> Void) {
+    private func taskHandler<T: Codable>(data: Data?, response: URLResponse?, error: Error?, completionHandler: @escaping (Result<T, NetworkErrorsType>) -> Void) {
         
         if let statusCode = (response as? HTTPURLResponse)?.statusCode , !(200..<300 ~= statusCode) {
             let error = NetworkErrorOrganaizer.organize(statusCode: statusCode)
-            networkState?(.error(.httpError(error)))
+            networkState?(.error(NetworkError.init(error: .httpError(error))))
             completionHandler(.failure(.httpError(error)))
             return
         }
@@ -76,7 +76,7 @@ public class NetworkManager {
             completionHandler(.success(decodedData))
         }
         catch {
-            self.networkState?(.error(.encodeError))
+            self.networkState?(.error(NetworkError.init(error: .encodeError)))
             completionHandler(.failure(.encodeError))
         }
     }

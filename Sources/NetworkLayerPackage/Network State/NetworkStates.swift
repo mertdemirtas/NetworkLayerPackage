@@ -10,5 +10,5 @@ import Foundation
 public enum NetworkStates {
     case processing
     case done
-    case error(NetworkErrors)
+    case error(NetworkError)
 }

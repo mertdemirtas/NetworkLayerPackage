@@ -9,9 +9,9 @@ import Foundation
 
 public class NetworkModel: Error {
     private var statusCode: Int
-    private var statusDescription: NetworkErrors
+    private var statusDescription: NetworkErrorsType
     
-    init(statusCode: Int, statusDescription: NetworkErrors) {
+    init(statusCode: Int, statusDescription: NetworkErrorsType) {
         self.statusCode = statusCode
         self.statusDescription = statusDescription
     }
