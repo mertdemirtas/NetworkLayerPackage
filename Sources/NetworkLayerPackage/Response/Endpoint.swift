@@ -11,7 +11,7 @@ public protocol Endpoint {
     var networkConstants : NetworkConstants { get }
     var httpMethod: HTTPMethods { get }
     var path: String? { get }
-    var hbeaders: [String: String]? { get }
+    var headers: [String: String]? { get }
     var body: [String: Any]? { get }
     
 }
